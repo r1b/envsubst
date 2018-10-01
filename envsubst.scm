@@ -1,25 +1,31 @@
 (use matchable posix utf8)
 
-(define (getenv name)
-  (let ((value (get-environment-variable name)))
+(define (getenv name-chars)
+  (let* ((name (list->string name-chars))
+         (value (get-environment-variable name)))
     (if (not value)
       (error "no such environment variable" name)
-      value)))
+      (string->list value))))
 
-(define (parse-identifier tokens)
+(define (parse-identifier tokens parameter-expansion?)
   (let loop ((identifier '())
              (tokens tokens))
     (if (null? tokens)
-      identifier
+      (if parameter-expansion?
+        (error "unexpected EOF while looking for matching `}")
+        (getenv identifier))
       (match tokens
-             ((#\} tail ...) (append (string->list (getenv (list->string identifier))) (parse tail)))
+             ((or (and parameter-expansion? (#\} tail ...))
+                  (and tail ((? char-whitespace?) (? char?) ...)))
+              (append (getenv identifier) (parse tail)))
              ((token tail ...) (loop (append identifier (list token)) tail))))))
 
 (define (parse tokens)
   (if (null? tokens)
     tokens
     (match tokens
-           ((#\$ #\{ tail ...) (parse-identifier tail))
+           ((#\$ #\{ tail ...) (parse-identifier tail #t))
+           ((#\$ tail ...) (parse-identifier tail #f))
            ((token tail ...)
             (cons token (parse tail))))))
 
