@@ -1,0 +1,8 @@
+; https://wiki.call-cc.org/eggs%20tutorial#the-meta-file
+
+((license "BSD")
+ (category tools)
+ (needs matchable posix utf8)
+ (test-depends test)
+ (author "Robert C Jensen")
+ (synopsis "Simple templating with parameter expansion"))
