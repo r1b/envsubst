@@ -1,0 +1,6 @@
+*.c
+*.import.scm
+*.log
+*.o
+*.so
+TODO

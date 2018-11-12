@@ -3,6 +3,6 @@
 ((license "BSD")
  (category tools)
  (needs matchable posix utf8)
- (test-depends test)
+ (test-depends call-with-environment-variables test)
  (author "Robert C Jensen")
  (synopsis "Simple templating with parameter expansion"))

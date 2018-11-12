@@ -1,6 +1,6 @@
 ; https://wiki.call-cc.org/eggs%20tutorial#the-setup-file
 (compile -s -O3 -d1 envsubst.scm -j envsubst)
-(compile -s envsubst.import.scm -O3 -d0)))
+(compile -s envsubst.import.scm -O3 -d0)
 
 (install-extension
  'envsubst
