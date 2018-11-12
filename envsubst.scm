@@ -16,7 +16,7 @@
     (let loop ((identifier '())
                (tokens tokens))
       (match tokens
-        ((and tail ((? char-whitespace?) (? char?) ...))
+        ((and tail ((or (? char-whitespace?) #\$) (? char?) ...))
          (append (getenv identifier) (parse tail)))
         ((token tail ...) (loop (append identifier (list token)) tail))
         ('() (getenv identifier)))))

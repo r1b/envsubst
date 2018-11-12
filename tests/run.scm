@@ -21,7 +21,34 @@
     "hello world"
     (call-with-environment-variables
       '(("WORLD" . "world"))
-      (lambda () (parse-line "hello $WORLD")))))
+      (lambda () (parse-line "hello $WORLD"))))
+  (test
+    "multiple"
+    "hello world"
+    (call-with-environment-variables
+      '(("HELLO" . "hello") ("WORLD" . "world"))
+      (lambda () (parse-line "$HELLO $WORLD"))))
+  (test
+    "adjacent"
+    "helloworld"
+    (call-with-environment-variables
+      '(("HELLO" . "hello") ("WORLD" . "world"))
+      (lambda () (parse-line "$HELLO$WORLD"))))
+  ; FIXME
+  (test
+    "no variable at end"
+    "hello$"
+    (call-with-environment-variables
+      '(("HELLO" . "hello"))
+      (lambda () (parse-line "$HELLO$"))))
+  ; FIXME
+  (test
+    "no variables at all"
+    "$$$$$$"
+    (call-with-environment-variables
+      '()
+      (lambda () (parse-line "$$$$$$"))))
+  )
 
 (test-end "envsubst")
 
