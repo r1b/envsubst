@@ -142,7 +142,13 @@
     "empty identifier"
     (call-with-environment-variables
       '()
-      (lambda () (parse-line "${}")))))
+      (lambda () (parse-line "${}"))))
+  ; FIXME this should be `bad substitution`
+  (test-error
+    "invalid identifier"
+    (call-with-environment-variables
+      '()
+      (lambda () (parse-line "${{whoops}")))))
 
 (test-end "envsubst")
 
