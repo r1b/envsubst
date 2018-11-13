@@ -13,10 +13,11 @@ envsubst < INPUT > OUTPUT
 The following expansions are supported:
 
 | form | set and not null | set but null | unset |
+| ---- | ---------------- | ------------ | ----- |
 | ${parameter:-word} | substitute parameter | substitute word | substitute word |
 | ${parameter-word} | substitute parameter | substitute null | substitute word |
-| ${parameter:?word} | substitute parameter | error, exit | error, exit |
-| ${parameter?word} | substitute parameter | substitute null | error, exit |
+| ${parameter:?[word]} | substitute parameter | error, exit | error, exit |
+| ${parameter?[word]} | substitute parameter | substitute null | error, exit |
 
 ## todo
 
