@@ -16,5 +16,5 @@ The following expansions are supported:
 | ---- | ---------------- | ------------ | ----- |
 | ${parameter:-word} | substitute parameter | substitute word | substitute word |
 | ${parameter-word} | substitute parameter | substitute null | substitute word |
-| ${parameter:?word} | substitute parameter | error, exit | error, exit |
-| ${parameter?word} | substitute parameter | substitute null | error, exit |
+| ${parameter:?[word]} | substitute parameter | error, exit | error, exit |
+| ${parameter?[word]} | substitute parameter | substitute null | error, exit |
