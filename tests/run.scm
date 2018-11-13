@@ -48,7 +48,101 @@
     (call-with-environment-variables
       '()
       (lambda () (parse-line "$$$$$$"))))
-  )
+  ; FIXME
+  (test
+    "lone $"
+    "$ $ $ $ $ $"
+    (call-with-environment-variables
+      '()
+      (lambda () (parse-line "$ $ $ $ $ $")))))
+
+(test-group "parameter expansion"
+  (test
+    "trivial"
+    "hello world"
+    (call-with-environment-variables
+      '(("HELLO" . "hello"))
+      (lambda () (parse-line "${HELLO} world"))))
+  (test
+    "use-default-if-unset: unset"
+    "hello world"
+    (call-with-environment-variables
+      '()
+      (lambda () (parse-line "${HELLO-hello} world"))))
+  (test
+    "use-default-if-unset: null"
+    " world"
+    (call-with-environment-variables
+      '(("HELLO" . ""))
+      (lambda () (parse-line "${HELLO-hello} world"))))
+  (test
+    "use-default-if-unset: not null"
+    "hello world"
+    (call-with-environment-variables
+      '(("HELLO" . "hello"))
+      (lambda () (parse-line "${HELLO-goodbye} world"))))
+  (test
+    "use-default-if-unset-or-null: unset"
+    "hello world"
+    (call-with-environment-variables
+      '()
+      (lambda () (parse-line "${HELLO:-hello} world"))))
+  (test
+    "use-default-if-unset-or-null: null"
+    "hello world"
+    (call-with-environment-variables
+      '(("HELLO" . ""))
+      (lambda () (parse-line "${HELLO:-hello} world"))))
+  (test
+    "use-default-if-unset-or-null: not null"
+    "hello world"
+    (call-with-environment-variables
+      '(("HELLO" . "hello"))
+      (lambda () (parse-line "${HELLO:-goodbye} world"))))
+  (test-error
+    "indicate-error-if-unset: unset"
+    (call-with-environment-variables
+      '()
+      (lambda () (parse-line "${HELLO?} world"))))
+  (test
+    "indicate-error-if-unset: null"
+    " world"
+    (call-with-environment-variables
+      '(("HELLO" . ""))
+      (lambda () (parse-line "${HELLO?goodbye} world"))))
+  (test
+    "indicate-error-if-unset: not null"
+    "hello world"
+    (call-with-environment-variables
+      '(("HELLO" . "hello"))
+      (lambda () (parse-line "${HELLO?goodbye} world"))))
+  (test-error
+    "indicate-error-if-unset-or-null: unset"
+    (call-with-environment-variables
+      '()
+      (lambda () (parse-line "${HELLO:?} world"))))
+  (test-error
+    "indicate-error-if-unset-or-null: null"
+    (call-with-environment-variables
+      '(("HELLO" . ""))
+      (lambda () (parse-line "${HELLO:?goodbye} world"))))
+  (test
+    "indicate-error-if-unset-or-null: not null"
+    "hello world"
+    (call-with-environment-variables
+      '(("HELLO" . "hello"))
+      (lambda () (parse-line "${HELLO:?goodbye} world"))))
+  (test-error
+    "missing trailing brace"
+    (call-with-environment-variables
+      '(("HELLO" . "hello"))
+      (lambda () (parse-line "${HELLO world"))))
+  ; FIXME this should be `bad substitution`
+  (test-error
+    "empty identifier"
+    (call-with-environment-variables
+      '()
+      (lambda () (parse-line "${}")))))
 
 (test-end "envsubst")
 

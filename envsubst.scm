@@ -2,36 +2,78 @@
   (import scheme chicken extras)
   (use matchable posix utf8)
 
-  (define (getenv tokens)
+  (define (unset-error tokens)
+    (error "environment variable is unset" (list->string tokens)))
+
+  (define (getenv tokens unset-handler)
     (let* ((name (list->string tokens))
            (value (get-environment-variable name)))
       (if (not value)
-          (error "no such environment variable" name)
+          (unset-handler tokens)
           (string->list value))))
 
+  (define (getenv-strict tokens)
+    (getenv tokens (lambda (tokens) (unset-error tokens))))
+
+  (define (getenv-unset tokens)
+    (getenv tokens (lambda (_) #f)))
+
+  ; ${parameter-word}
+  (define (use-default-if-unset parameter word)
+    (let ((value (getenv-unset parameter)))
+      (if (not value)
+          word
+          value)))
+
+  ; ${parameter:-word}
+  (define (use-default-if-unset-or-null parameter word)
+    (let ((value (getenv-unset parameter)))
+      (if (or (not value) (null? value))
+          word
+          value)))
+
+  ; ${parameter?word}
+  (define (indicate-error-if-unset parameter word)
+    (let ((value (getenv-unset parameter)))
+      (if (not value)
+          (if (null? word) (unset-error parameter) (error word))
+          value)))
+
+  ; ${parameter:?word}
+  (define (indicate-error-if-unset-or-null parameter word)
+    (let ((value (getenv-unset parameter)))
+      (if (or (not value) (null? value))
+          (if (null? word) (unset-error parameter) (error word))
+          value)))
+
+  (define (parse-parameter-expansion tokens)
+    (let loop ((parameter '())
+               (tokens tokens))
+      (match tokens
+        ((#\- word ...) (use-default-if-unset parameter word))
+        ((#\: #\- word ...) (use-default-if-unset-or-null parameter word))
+        ((#\? word ...) (indicate-error-if-unset parameter word))
+        ((#\: #\? word ...) (indicate-error-if-unset-or-null parameter word))
+        ((token tail ...) (loop (append parameter (list token)) tail))
+        ('() (getenv-strict parameter)))))
+
   (define (parse-variable-with-parameter-expansion tokens)
-    (parse-variable tokens))
+    (let loop ((expression '())
+               (tokens tokens))
+      (match tokens
+        ((#\} tail ...)
+         (append (parse-parameter-expansion expression) (parse tail)))
+        ((token tail ...) (loop (append expression (list token)) tail))
+        ('() (error "unexpected EOF while looking for matching `}")))))
 
   (define (parse-variable tokens)
     (let loop ((identifier '())
                (tokens tokens))
       (match tokens
         ((and tail ((or (? char-whitespace?) #\$) (? char?) ...))
-         (append (getenv identifier) (parse tail)))
+         (append (getenv-strict identifier) (parse tail)))
         ((token tail ...) (loop (append identifier (list token)) tail))
-        ('() (getenv identifier)))))
-
-  (define (parse-identifier tokens parameter-expansion?)
-    (let loop ((identifier '())
-               (tokens tokens))
-      (match tokens
-        ((or (and parameter-expansion? (#\} tail ...))
-             (and tail ((? char-whitespace?) (? char?) ...)))
-         (append (getenv identifier) (parse tail)))
-        ((token tail ...) (loop (append identifier (list token)) tail))
-        ('() (if parameter-expansion?
-                (error "unexpected EOF while looking for matching `}")
-                (getenv identifier))))))
+        ('() (getenv-strict identifier)))))
 
   (define (parse tokens)
     (match tokens
