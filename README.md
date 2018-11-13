@@ -17,3 +17,15 @@ The following expansions are supported:
 | ${parameter-word} | substitute parameter | substitute null | substitute word |
 | ${parameter:?word} | substitute parameter | error, exit | error, exit |
 | ${parameter?word} | substitute parameter | substitute null | error, exit |
+
+## todo
+
+* Support `${parameter:+word}` and `${parameter+word}`
+* Support `${parameter:=word}` and `${parameter=word}` (?)
+* Fix substitution edge cases e.g `$FOO$` `$$$$$$` `$ $ $ $ $ $`
+* Fix parameter expansion edge cases e.g `${{FOO}` `${}`
+* Identify other edge cases
+* Packaging
+* Escapes
+* Whitelisting
+* Inplace
