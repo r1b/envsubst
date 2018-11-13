@@ -30,3 +30,4 @@ The following expansions are supported:
 * Escapes
 * Whitelisting
 * Inplace
+* Test `main`
