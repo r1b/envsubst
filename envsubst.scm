@@ -78,7 +78,8 @@
   (define (parse tokens)
     (match tokens
       ((#\$ #\{ tail ...) (parse-variable-with-parameter-expansion tail))
-      ((#\$ tail ...) (parse-variable tail))
+      ((#\$ (and head (not (or (? char-whitespace?) #\$))) tail ...)
+       (parse-variable (cons head tail)))
       ((token tail ...)
        (cons token (parse tail)))
       ('() tokens)))
