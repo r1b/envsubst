@@ -19,6 +19,12 @@ The following expansions are supported:
 | ${parameter:?[word]} | substitute parameter | error, exit | error, exit |
 | ${parameter?[word]} | substitute parameter | substitute null | error, exit |
 
+## testing
+
+```bash
+chicken-install -n && csi tests/run.scm
+```
+
 ## todo
 
 * Support `${parameter:+word}` and `${parameter+word}`
