@@ -34,21 +34,18 @@
     (call-with-environment-variables
       '(("HELLO" . "hello") ("WORLD" . "world"))
       (lambda () (parse-line "$HELLO$WORLD"))))
-  ; FIXME
   (test
     "no variable at end"
     "hello$"
     (call-with-environment-variables
       '(("HELLO" . "hello"))
       (lambda () (parse-line "$HELLO$"))))
-  ; FIXME
   (test
     "no variables at all"
     "$$$$$$"
     (call-with-environment-variables
       '()
       (lambda () (parse-line "$$$$$$"))))
-  ; FIXME
   (test
     "lone $"
     "$ $ $ $ $ $"
@@ -133,22 +130,34 @@
       '(("HELLO" . "hello"))
       (lambda () (parse-line "${HELLO:?goodbye} world"))))
   (test-error
-    "missing trailing brace"
+    "missing trailing rbrace"
     (call-with-environment-variables
       '(("HELLO" . "hello"))
       (lambda () (parse-line "${HELLO world"))))
-  ; FIXME this should be `bad substitution`
-  (test-error
-    "empty identifier"
+  (test
+    "extra trailing rbrace"
+    "hello}"
     (call-with-environment-variables
-      '()
+      '(("HELLO" . "hello"))
+      (lambda () (parse-line "${HELLO}}"))))
+  (test
+    "empty"
+    "${}"
+    (call-with-environment-variables
+      '(("HELLO" . "hello"))
       (lambda () (parse-line "${}"))))
-  ; FIXME this should be `bad substitution`
-  (test-error
-    "invalid identifier"
+  (test
+    "extra leading lbrace"
+    "${{HELLO}"
     (call-with-environment-variables
-      '()
-      (lambda () (parse-line "${{whoops}")))))
+      '(("HELLO" . "hello"))
+      (lambda () (parse-line "${{HELLO}"))))
+  (test
+    "nested expansion"
+    "${hello}"
+    (call-with-environment-variables
+      '(("HELLO" . "hello"))
+      (lambda () (parse-line "${${HELLO}}")))))
 
 (test-end "envsubst")
 

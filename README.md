@@ -8,6 +8,20 @@ Clone of [envsubst](https://www.gnu.org/software/gettext/manual/html_node/envsub
 envsubst < INPUT > OUTPUT
 ```
 
+## semantics
+
+I try to be true to the semantics of the original `envsubst` which are slightly
+different from the semantics in a shell. These differences include:
+
+* Most "bad substitutions" are allowed
+    * `${}` -> "${}"
+    * `${{foo}` -> `${{foo}`
+* Nested expansions are allowed:
+    * `export foo=bar ${${foo}}` -> `${bar}`
+    * ...but they only expand at depth=1 ;p
+
+Unlike `envsubst`, shell builtin variables like `$$` and `$0` are not supported.
+
 ## parameter expansion
 
 The following expansions are supported:
@@ -28,12 +42,14 @@ chicken-install -n && csi tests/run.scm
 ## todo
 
 * Support `${parameter:+word}` and `${parameter+word}`
-* Support `${parameter:=word}` and `${parameter=word}` (?)
-* Fix substitution edge cases e.g `$FOO$` `$$$$$$` `$ $ $ $ $ $`
-* Fix parameter expansion edge cases e.g `${{FOO}` `${}`
-* Identify other edge cases
 * Packaging
 * Escapes
 * Whitelisting
 * Inplace
 * Test `main`
+* Configure strictness
+* Add reference tests against envsubst
+
+## todo if ur bored
+
+* Add --posix

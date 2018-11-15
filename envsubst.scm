@@ -77,8 +77,10 @@
 
   (define (parse tokens)
     (match tokens
-      ((#\$ #\{ tail ...) (parse-variable-with-parameter-expansion tail))
-      ((#\$ (and head (not (or (? char-whitespace?) #\$))) tail ...)
+      ; FIXME pull out this "lookahead"
+      ((#\$ #\{ (and head (not (or (? char-whitespace?) #\$ #\{ #\}))) tail ...)
+       (parse-variable-with-parameter-expansion (cons head tail)))
+      ((#\$ (and head (not (or (? char-whitespace?) #\$ #\{ #\}))) tail ...)
        (parse-variable (cons head tail)))
       ((token tail ...)
        (cons token (parse tail)))
