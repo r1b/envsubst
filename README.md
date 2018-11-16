@@ -49,6 +49,7 @@ chicken-install -n && csi tests/run.scm
 * Test `main`
 * Configure strictness
 * Add reference tests against envsubst
+* Support 🐔 5
 
 ## todo if ur bored
 
