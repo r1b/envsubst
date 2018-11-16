@@ -14,7 +14,7 @@ I try to be true to the semantics of the original `envsubst` which are slightly
 different from the semantics in a shell. These differences include:
 
 * Most "bad substitutions" are allowed
-    * `${}` -> "${}"
+    * `${}` -> `${}`
     * `${{foo}` -> `${{foo}`
 * Nested expansions are allowed:
     * `export foo=bar ${${foo}}` -> `${bar}`
