@@ -32,6 +32,8 @@ The following expansions are supported:
 | ${parameter-word} | substitute parameter | substitute null | substitute word |
 | ${parameter:?[word]} | substitute parameter | error, exit | error, exit |
 | ${parameter?[word]} | substitute parameter | substitute null | error, exit |
+| ${parameter:+word} | substitute word | substitute null | substitute null |
+| ${parameter+word} | substitute word | substitute word | substitute null |
 
 ## testing
 
@@ -41,16 +43,13 @@ chicken-install -n && csi tests/run.scm
 
 ## todo
 
-* Support `${parameter:+word}` and `${parameter+word}`
-* Packaging
-* Escapes
 * Whitelisting
-* Inplace
-* Test `main`
-* Configure strictness
-* Add reference tests against envsubst
+* Packaging
 * Support 🐔 5
 
 ## todo if ur bored
 
+* Escapes
+* Inplace
+* Add reference tests against envsubst
 * Add --posix

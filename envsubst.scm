@@ -46,6 +46,20 @@
           (if (null? word) (unset-error parameter) (error word))
           value)))
 
+  ; ${parameter+word}
+  (define (use-alternative-value-if-set-or-null parameter word)
+    (let ((value (getenv-unset parameter)))
+      (if (or value (null? value))
+          word
+          '())))
+
+  ; ${parameter:+word}
+  (define (use-alternative-value-if-set parameter word)
+    (let ((value (getenv-unset parameter)))
+      (if (and value (not (null? value)))
+          word
+          '())))
+
   (define (parse-parameter-expansion tokens)
     (let loop ((parameter '())
                (tokens tokens))
@@ -54,6 +68,8 @@
         ((#\: #\- word ...) (use-default-if-unset-or-null parameter word))
         ((#\? word ...) (indicate-error-if-unset parameter word))
         ((#\: #\? word ...) (indicate-error-if-unset-or-null parameter word))
+        ((#\+ word ...) (use-alternative-value-if-set-or-null parameter word))
+        ((#\: #\+ word ...) (use-alternative-value-if-set parameter word))
         ((token tail ...) (loop (append parameter (list token)) tail))
         ('() (getenv-strict parameter)))))
 

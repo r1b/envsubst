@@ -73,7 +73,7 @@
       '(("HELLO" . ""))
       (lambda () (parse-line "${HELLO-hello} world"))))
   (test
-    "use-default-if-unset: not null"
+    "use-default-if-unset: set"
     "hello world"
     (call-with-environment-variables
       '(("HELLO" . "hello"))
@@ -91,7 +91,7 @@
       '(("HELLO" . ""))
       (lambda () (parse-line "${HELLO:-hello} world"))))
   (test
-    "use-default-if-unset-or-null: not null"
+    "use-default-if-unset-or-null: set"
     "hello world"
     (call-with-environment-variables
       '(("HELLO" . "hello"))
@@ -108,7 +108,7 @@
       '(("HELLO" . ""))
       (lambda () (parse-line "${HELLO?goodbye} world"))))
   (test
-    "indicate-error-if-unset: not null"
+    "indicate-error-if-unset: set"
     "hello world"
     (call-with-environment-variables
       '(("HELLO" . "hello"))
@@ -124,11 +124,47 @@
       '(("HELLO" . ""))
       (lambda () (parse-line "${HELLO:?goodbye} world"))))
   (test
-    "indicate-error-if-unset-or-null: not null"
+    "indicate-error-if-unset-or-null: set"
     "hello world"
     (call-with-environment-variables
       '(("HELLO" . "hello"))
       (lambda () (parse-line "${HELLO:?goodbye} world"))))
+  (test
+    "use-alternative-value-if-set-or-null: set"
+    "goodbye world"
+    (call-with-environment-variables
+      '(("HELLO" . "hello"))
+      (lambda () (parse-line "${HELLO+goodbye} world"))))
+  (test
+    "use-alternative-value-if-set-or-null: unset"
+    " world"
+    (call-with-environment-variables
+      '()
+      (lambda () (parse-line "${HELLO+goodbye} world"))))
+  (test
+    "use-alternative-value-if-set-or-null: null"
+    "goodbye world"
+    (call-with-environment-variables
+      '(("HELLO" . ""))
+      (lambda () (parse-line "${HELLO+goodbye} world"))))
+  (test
+    "use-alternative-value-if-set: set"
+    "goodbye world"
+    (call-with-environment-variables
+      '(("HELLO" . "hello"))
+      (lambda () (parse-line "${HELLO:+goodbye} world"))))
+  (test
+    "use-alternative-value-if-set: unset"
+    " world"
+    (call-with-environment-variables
+      '()
+      (lambda () (parse-line "${HELLO:+goodbye} world"))))
+  (test
+    "use-alternative-value-if-set: null"
+    " world"
+    (call-with-environment-variables
+      '(("HELLO" . ""))
+      (lambda () (parse-line "${HELLO:+goodbye} world"))))
   (test-error
     "missing trailing rbrace"
     (call-with-environment-variables
