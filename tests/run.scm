@@ -1,5 +1,4 @@
-(use test)
-(use call-with-environment-variables envsubst)
+(use call-with-environment-variables envsubst test)
 
 (test-begin "envsubst")
 
