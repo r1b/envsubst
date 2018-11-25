@@ -1,13 +1,25 @@
-(module envsubst (parse-line)
+(module envsubst (parse-line parse-variables set-variables!)
   (import scheme chicken extras)
   (use matchable posix utf8)
+
+  ; ---------------------------------------------------------------------------
+
+  (define VARIABLES '())
+
+  ; ---------------------------------------------------------------------------
 
   (define (unset-error tokens)
     (error "environment variable is unset" (list->string tokens)))
 
+  (define (get-environment-variable-from-whitelist name)
+    (let ((variable (assoc name VARIABLES)))
+      (and variable (cdr variable))))
+
   (define (getenv tokens unset-handler)
     (let* ((name (list->string tokens))
-           (value (get-environment-variable name)))
+           (value (if (null? VARIABLES)
+                      (get-environment-variable name)
+                      (get-environment-variable-from-whitelist name))))
       (if (not value)
           (unset-handler tokens)
           (string->list value))))
@@ -17,6 +29,8 @@
 
   (define (getenv-unset tokens)
     (getenv tokens (lambda (_) #f)))
+
+  ; ---------------------------------------------------------------------------
 
   ; ${parameter-word}
   (define (use-default-if-unset parameter word)
@@ -59,6 +73,8 @@
       (if (and value (not (null? value)))
           word
           '())))
+
+  ; ---------------------------------------------------------------------------
 
   (define (parse-parameter-expansion tokens)
     (let loop ((parameter '())
@@ -105,8 +121,13 @@
   (define (parse-line line)
     (list->string (parse (string->list line))))
 
-  (define (main _)
-    (let ((line (read-line)))
-      (unless (eof-object? line)
-        (begin (write-line (parse-line line))
-               (main _))))))
+  ; ---------------------------------------------------------------------------
+
+  (define (parse-variables variables)
+    (map (lambda (name) (cons name (get-environment-variable name)))
+         variables))
+
+  ; ---------------------------------------------------------------------------
+
+  (define (set-variables! variables)
+    (set! VARIABLES (parse-variables variables))))

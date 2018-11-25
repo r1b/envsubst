@@ -5,7 +5,7 @@ Clone of [envsubst](https://www.gnu.org/software/gettext/manual/html_node/envsub
 ## usage
 
 ```bash
-envsubst < INPUT > OUTPUT
+envsubst [VARIABLE] ... < INPUT > OUTPUT
 ```
 
 ## semantics
@@ -20,7 +20,11 @@ different from the semantics in a shell. These differences include:
     * `export foo=bar ${${foo}}` -> `${bar}`
     * ...but they only expand at depth=1 ;p
 
-Unlike `envsubst`, shell builtin variables like `$$` and `$0` are not supported.
+Differences from the original `envsubst` include:
+
+* Shell builtin variables like `$$` and `$0` are not supported
+* Unset variables throw an error by default (use `${parameter-}` or `${parameter+} to ignore unset variables)
+* Instead of using [SHELL-FORMAT](https://unix.stackexchange.com/questions/294378/replacing-only-specific-variables-with-envsubst) to whitelist variables pass the variable names as arguments.
 
 ## parameter expansion
 
@@ -43,7 +47,6 @@ chicken-install -n && csi tests/run.scm
 
 ## todo
 
-* Whitelisting
 * Packaging
 * Support 🐔 5
 

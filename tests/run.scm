@@ -194,6 +194,43 @@
       '(("HELLO" . "hello"))
       (lambda () (parse-line "${${HELLO}}")))))
 
+(test-group "shell format"
+  (test
+    "single"
+    "hello"
+    (call-with-environment-variables
+      '(("HELLO" . "hello"))
+      (lambda ()
+        (begin
+          (set-variables! '("HELLO"))
+          (parse-line "$HELLO")))))
+  (test
+    "multi"
+    "hellogoodbye"
+    (call-with-environment-variables
+      '(("HELLO" . "hello") ("GOODBYE" . "goodbye"))
+      (lambda ()
+        (begin
+          (set-variables! '("HELLO" "GOODBYE"))
+          (parse-line "$HELLO$GOODBYE")))))
+  (test-error
+    "whitelisting report missing"
+    (call-with-environment-variables
+      '(("HELLO" . "hello") ("GOODBYE" . "goodbye"))
+      (lambda ()
+        (begin
+          (set-variables! '("GOODBYE"))
+          (parse-line "$HELLO$GOODBYE")))))
+  (test
+    "whitelisting ignore missing"
+    "goodbye"
+    (call-with-environment-variables
+      '(("HELLO" . "hello") ("GOODBYE" . "goodbye"))
+      (lambda ()
+        (begin
+          (set-variables! '("GOODBYE"))
+          (parse-line "${HELLO-}$GOODBYE"))))))
+
 (test-end "envsubst")
 
 (test-exit)
