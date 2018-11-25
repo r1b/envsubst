@@ -23,8 +23,8 @@ different from the semantics in a shell. These differences include:
 Differences from the original `envsubst` include:
 
 * Shell builtin variables like `$$` and `$0` are not supported
-* Unset variables throw an error by default (use `${parameter-}` or `${parameter+} to ignore unset variables)
-* Instead of using [SHELL-FORMAT](https://unix.stackexchange.com/questions/294378/replacing-only-specific-variables-with-envsubst) to whitelist variables pass the variable names as arguments.
+* Unset variables throw an error by default (use `${parameter-}` or `${parameter+}` to ignore unset variables)
+* Instead of using [SHELL-FORMAT](https://unix.stackexchange.com/questions/294378/replacing-only-specific-variables-with-envsubst) whitelisted variables are passed as arguments
 
 ## parameter expansion
 
