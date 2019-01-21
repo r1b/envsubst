@@ -45,11 +45,6 @@ The following expansions are supported:
 chicken-install -n && csi tests/run.scm
 ```
 
-## todo
-
-* Packaging
-* Support 🐔 5
-
 ## todo if ur bored
 
 * Escapes
