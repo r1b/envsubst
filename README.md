@@ -5,7 +5,7 @@ Clone of [envsubst](https://www.gnu.org/software/gettext/manual/html_node/envsub
 ## usage
 
 ```bash
-envsubst [VARIABLE] ... < INPUT > OUTPUT
+envsubst-cli [VARIABLE] ... < INPUT > OUTPUT
 ```
 
 ## semantics
