@@ -1,4 +1,4 @@
-(use envsubst)
+(import (chicken io) (chicken process-context) envsubst)
 
 (define (parse-lines)
   (let ((line (read-line)))
@@ -12,3 +12,5 @@
     (unless (null? args)
       (set-variables! args))
     (parse-lines)))
+
+(main (command-line-arguments))

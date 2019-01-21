@@ -1,0 +1,10 @@
+((license "BSD")
+ (category tools)
+ (dependencies matchable)
+ (test-dependencies test)
+ (author "Robert C Jensen")
+ (synopsis "Simple templating with parameter expansion")
+ (components
+  (extension envsubst)
+  (program envsubst-cli
+   (component-dependencies envsubst))))

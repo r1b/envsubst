@@ -1,6 +1,8 @@
 *.c
 *.import.scm
+*.link
 *.log
 *.o
 *.so
-TODO
+*.sh
+envsubst-cli

@@ -1,6 +1,5 @@
 (module envsubst (parse-line parse-variables set-variables!)
-  (import scheme chicken extras)
-  (use matchable posix utf8)
+  (import (chicken base) (chicken process-context) scheme matchable)
 
   ; ---------------------------------------------------------------------------
 
