@@ -42,7 +42,7 @@ The following expansions are supported:
 ## testing
 
 ```bash
-chicken-install -n && csi tests/run.scm
+chicken-install -test
 ```
 
 ## todo if ur bored

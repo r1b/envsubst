@@ -1,4 +1,4 @@
-(include "tests/call-with-environment-variables.scm")
+(include "call-with-environment-variables.scm")
 (import call-with-environment-variables envsubst test)
 
 (test-begin "envsubst")
